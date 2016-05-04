@@ -2,10 +2,8 @@
 
 from __future__ import absolute_import
 
-import os
 import shutil
 import tempfile
-import unittest
 
 from .base import ForkOutputTest
 
@@ -56,6 +54,7 @@ class TestPiprun(ForkOutputTest):
 
     FLASK_SCRIPT = """
 #!/usr/bin/env piprun Flask==0.10.1 --
+from __future__ import print_function
 
 from flask import Flask
 

@@ -32,6 +32,6 @@ class ForkOutputTest(unittest.TestCase):
             os.dup2(out_write, 2)
             try:
                 func()
-            except:
+            except:  # pylint:disable=bare-except
                 traceback.print_exc()
-            os._exit(1)
+            os._exit(1)  # pylint:disable=protected-access

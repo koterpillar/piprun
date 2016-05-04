@@ -4,6 +4,14 @@ import os
 import subprocess
 
 
+def devnull():
+    """Polyfill subprocess.DEVNULL for Python < 3.3."""
+    try:
+        return subprocess.DEVNULL
+    except AttributeError:
+        return open(os.devnull)
+
+
 VIRTUALENV_DIR = os.path.expanduser('~/.piprun')
 
 
@@ -36,11 +44,11 @@ def create_env(path, interpreter, requirements):
     if interpreter:
         virtualenv_args.append('--python={}'.format(interpreter))
     virtualenv_args.append(path)
-    subprocess.check_call(virtualenv_args, stdout=subprocess.DEVNULL)
+    subprocess.check_call(virtualenv_args, stdout=devnull())
 
     pip = os.path.join(path, 'bin', 'pip')
     subprocess.check_call((pip, 'install') + requirements,
-                          stdout=subprocess.DEVNULL)
+                          stdout=devnull())
 
 
 def activate_env(path):
@@ -69,7 +77,11 @@ def main(*args):
     env_path = os.path.join(VIRTUALENV_DIR, requirements_hash)
 
     if not os.path.exists(env_path):
-        create_env(env_path, interpreter=interpreter, requirements=requirements)
+        create_env(
+            env_path,
+            interpreter=interpreter,
+            requirements=requirements,
+        )
 
     activate_env(env_path)
 
