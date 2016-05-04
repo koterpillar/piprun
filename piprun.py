@@ -9,7 +9,7 @@ def devnull():
     try:
         return subprocess.DEVNULL
     except AttributeError:
-        return open(os.devnull)
+        return open(os.devnull, 'w')
 
 
 VIRTUALENV_DIR = os.path.expanduser('~/.piprun')
@@ -40,7 +40,7 @@ def create_env(path, interpreter, requirements):
     :param requirements: Requirements to install into the environment
     """
 
-    virtualenv_args = ['virtualenv']
+    virtualenv_args = ['virtualenv', '--quiet']
     if interpreter:
         virtualenv_args.append('--python={}'.format(interpreter))
     virtualenv_args.append(path)

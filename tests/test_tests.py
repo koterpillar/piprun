@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import sys
 import os
 
 from .base import ForkOutputTest
@@ -24,10 +25,13 @@ class TestForkOutputTest(ForkOutputTest):
     def test_returning_function(self):
         """Test a function that returns."""
 
+        def returning_function():
+            """Print some things and return."""
+            print("asdf")
+            sys.stdout.flush()
+
         self.assertEqual(
-            self.fork_output(
-                lambda: print("asdf"),
-            ),
+            self.fork_output(returning_function),
             "asdf\n"
         )
 
