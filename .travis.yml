@@ -21,3 +21,14 @@ after_success:
     - coveralls
 
 sudo: false
+
+deploy:
+    provider: pypi
+    user: koterpillar
+    password:
+        secure: "CTFy42TBQZFIiXcHmvxNukPCAnPnOcnJwdc6/hft3SasxLLaj5x4U6JVJrdBOtfo5kj9mnjxv5TIee617bemLOatKLR2Sd/OLjo7UETnwZTCsoHfyg7Ro+FE48v9bopczo4oEcPjU6YmOz6afBbQ1Lse7GxyK2YniRfyZ0Lhd3uqsCjc0TkNW08kbma6+8OAJqezW1sHDVB96p3D7E15YYGZt3NVAFF1Yv3zEkZuahbn5EMRWnUJvR8/MGESpCTmUobI/UwwMFnFI9DQWKhXRnt4AsWVzH8UfudJxmM+pDNQBpW7DSWrevC6Gm9bbVHnnQQ6RL+C51I1tpguavNHihbWeANY4NjVLhn98qM3wECP+ZxhIlzym5JoMbzf0nFfWnCNqnt4oSg69h5kigZ7lwzGiujXbaglm9HSScntX7CWQfBfVxPzRqiQgz3xARwMwv3XqwCWg3uX8ibErJv6PGrkp3lTHiQ8ZeBHzkRAL1rBlhAeYfRQ7zXL75p+yJ7tJJpTPfhT+JhXr0dJmhuOEx1/flwgl+tfX7wZIL5W7VGays0x+m+qFDGBzRX3FVuxJmBC0PoNl2s/oHwHfOzIYxz8TlgaF9p/t7K4n4Bxu9ONAnpYGWyewM+ldB9mWa3fQLSug6lkkERucH+g0Ot5zPCd9aGHLzRx6m1o885h9b0="
+    server: https://pypi.python.org/pypi
+    on:
+        tags: true
+        all_branches: true
+        condition: "\"$TOXENV\" = \"py35\" -a \"$TRAVIS_TAG\" = \"v$(python setup.py --version)\""
