@@ -1,6 +1,7 @@
 """Base test classes."""
 
 import os
+import traceback
 import unittest
 
 
@@ -29,5 +30,8 @@ class ForkOutputTest(unittest.TestCase):
             # anywhere?
             os.dup2(out_write, 1)
             os.dup2(out_write, 2)
-            func()
+            try:
+                func()
+            except:
+                traceback.print_exc()
             os._exit(1)

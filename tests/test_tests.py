@@ -19,3 +19,25 @@ class TestForkOutputTest(ForkOutputTest):
             ),
             "asdf\n"
         )
+
+    def test_returning_function(self):
+        """Test a function that returns."""
+
+        self.assertEqual(
+            self.fork_output(
+                lambda: print("asdf"),
+            ),
+            "asdf\n"
+        )
+
+    def test_exception(self):
+        """Test a function that raises an exception."""
+
+        def raise_exception():
+            """Raise a test exception."""
+            raise Exception("asdf")
+
+        self.assertIn(
+            "Exception: asdf",
+            self.fork_output(raise_exception),
+        )
