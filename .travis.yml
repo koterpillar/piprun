@@ -1,0 +1,23 @@
+language: python
+
+python: 3.5
+
+env:
+    - TOXENV=py27
+    - TOXENV=py34
+    - TOXENV=py35
+
+install:
+    - pip install tox
+
+cache:
+    directories:
+        - $HOME/virtualenv
+        - .tox
+
+script: tox
+
+after_success:
+    - coveralls
+
+sudo: false
