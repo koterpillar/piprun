@@ -52,19 +52,22 @@ class TestPiprun(ForkOutputTest):
 
             return self.fork_output(lambda: piprun.main(*arguments))
 
-    FLASK_SCRIPT = """
-#!/usr/bin/env piprun Flask==0.10.1 --
+    def flask_script(self, version):
+        """A script that requires Flask and prints its version."""
+
+        return """
+#!/usr/bin/env piprun Flask=={version} --
 from __future__ import print_function
 
-from flask import Flask
+import flask
 
-print(Flask)
-""".strip()
+print(flask.__version__)
+""".strip().format(version=version)
 
     def test_execution(self):
         """Test executing a file that specifies dependencies."""
 
         self.assertEqual(
-            self.execute_file(self.FLASK_SCRIPT),
-            '''<class 'flask.app.Flask'>\n'''
+            self.execute_file(self.flask_script('0.10.1')),
+            '''0.10.1\n'''
         )
