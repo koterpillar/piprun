@@ -78,41 +78,65 @@ class Environment(object):
         return str(hash((self.interpreter, tuple(self.requirements))))
 
 
-def split_args(args):
-    """
-    Split an argument list into arguments for piprun itself and the program
-    being run. Everything before the first '--' is considered to be
-    requirements, what follows '--' is passed to the program. It is an error
-    not to have '--' in the list.
-    """
+class Piprun(object):
+    """Main Piprun object."""
 
-    try:
-        reqs_end = args.index('--')
-    except ValueError:
-        raise ValueError("Argument list must include '--'.")
+    def split_args(self, args):
+        """
+        Split an argument list into arguments for piprun itself and the program
+        being run. Everything before the first '--' is considered to be
+        requirements, what follows '--' is passed to the program. It is an
+        error not to have '--' in the list.
+        """
 
-    return args[:reqs_end], args[reqs_end + 1:]
+        try:
+            reqs_end = args.index('--')
+        except ValueError:
+            raise ValueError("Argument list must include '--'.")
+
+        return args[:reqs_end], args[reqs_end + 1:]
+
+    def __init__(self, *args):
+        """Parse the command line arguments."""
+
+        requirements, program_args = self.split_args(args)
+
+        if os.path.exists(requirements[0]):
+            self.interpreter = requirements[0]
+            self.requirements = requirements[1:]
+        else:
+            self.interpreter = None
+            self.requirements = requirements
+
+        self.program_args = program_args
+
+    def run(self):
+        """Create or activate the environment and run the specified program."""
+        self.environment = Environment(
+            requirements=self.requirements,
+            interpreter=self.interpreter,
+        )
+
+        if not self.environment.exists:
+            self.environment.create()
+
+        self.environment.activate()
+
+        return self.execute()
+
+    def execute(self):
+        """Execute the specified script."""
+        os.execvp('python', ('python',) + self.program_args)
+
+    @classmethod
+    def main(cls, *args):
+        """Main entry point."""
+
+        piprun = cls(*args)
+        piprun.run()
 
 
 def main(*args):
-    """Main entry point."""
+    """Console entry point."""
 
-    requirements, args = split_args(args)
-
-    if os.path.exists(requirements[0]):
-        interpreter = requirements[0]
-        requirements = requirements[1:]
-    else:
-        interpreter = None
-
-    environment = Environment(
-        requirements=requirements,
-        interpreter=interpreter,
-    )
-
-    if not environment.exists:
-        environment.create()
-
-    environment.activate()
-
-    os.execvp('python', ('python',) + args)
+    return Piprun.main(*args)
